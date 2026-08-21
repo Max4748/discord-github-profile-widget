@@ -63,9 +63,10 @@ Fill ${blocking.join(', ')} in .env, then re-run: npm run doctor`);
     userRes.ok ? `User: ${user.username} (${user.id})` : `HTTP ${userRes.status}`);
 
   // Discord exposes no documented GET here, so this probe reads the *auth layer*, not the record:
-  //   403/50025 -> the request is rejected before routing: no application identity exists.
-  //   404        -> the auth layer accepted the call and the route simply has no GET handler.
-  // Only 403 is conclusive. A 404 means "run the real sync to know".
+  //   403/50025 -> rejected before routing: no application identity exists.
+  //   401       -> the bot token itself is dead; this probe says nothing about the identity.
+  //   404       -> the auth layer accepted the call and the route has no GET handler.
+  // Only 403 is conclusive. Anything else means "run the real sync to know".
   const profileRes = await fetch(
     `https://discord.com/api/v9/applications/${appId}/users/${userId}/identities/${userId}/profile`,
     { headers }
@@ -78,8 +79,9 @@ Fill ${blocking.join(', ')} in .env, then re-run: npm run doctor`);
       ? null
       : identityMissing
         ? `HTTP 403: ${profileBody.slice(0, 160)}`
-        : `HTTP ${profileRes.status} - auth layer no longer rejects the call, but this endpoint is write-only.`
-          + ' Run `npm start` to test the real PATCH.');
+        : profileRes.status === 401
+          ? 'Skipped: the bot token above is invalid, so this check cannot run.'
+          : `HTTP ${profileRes.status} - endpoint is write-only. Run ` + '`npm start`' + ' to test the real PATCH.');
 
   if (GH_PAT) {
     const ghRes = await fetch('https://api.github.com/user', {
