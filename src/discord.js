@@ -135,9 +135,20 @@ export async function updateDiscordWidget(config, stats) {
       }
 
       const errorText = await response.text();
-      throw new Error(`Discord API returned status ${response.status}: ${errorText}`);
+      const apiError = new Error(`Discord API returned status ${response.status}: ${errorText}`);
+      // 4xx other than 429 are credential/setup errors. Retrying them burns the 5 attempts
+      // and trips a real rate limit, which hides the actual cause in the logs.
+      apiError.permanent = response.status >= 400 && response.status < 500;
+      throw apiError;
 
     } catch (error) {
+      if (error.permanent) {
+        for (const line of explainDiscordError(error.message)) {
+          console.error(line);
+        }
+        throw error;
+      }
+
       if (attempt >= maxRetries) {
         throw error;
       }
@@ -145,4 +156,40 @@ export async function updateDiscordWidget(config, stats) {
       await new Promise(resolve => setTimeout(resolve, 3000));
     }
   }
+}
+
+function explainDiscordError(message) {
+  if (message.includes('50025') || message.includes('Invalid OAuth2 access token')) {
+    return [
+      '',
+      'Discord has no application identity for this (application, user) pair.',
+      'Check, in order:',
+      '  1. DISCORD_BOT_TOKEN belongs to the app in DISCORD_APPLICATION_ID.',
+      '  2. The account in DISCORD_USER_ID authorized the app with the',
+      '     openid + sdk.social_layer scopes (response_type=token).',
+      '  Run `npm run doctor` for the exact URL and steps.',
+      ''
+    ];
+  }
+
+  if (message.includes('APPLICATION_IDENTITY_PROVIDER_USER_ID_MISMATCH')) {
+    return [
+      '',
+      'An older identity record is still attached to this account.',
+      'Deauthorize the app in Discord Settings -> Authorized Apps, then authorize it again.',
+      'See docs/troubleshooting.md.',
+      ''
+    ];
+  }
+
+  if (message.includes('status 401')) {
+    return [
+      '',
+      'The bot token was rejected outright: it was most likely reset in the',
+      'Developer Portal after being copied. Reset it and update DISCORD_BOT_TOKEN.',
+      ''
+    ];
+  }
+
+  return [];
 }
