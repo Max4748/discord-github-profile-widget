@@ -1,6 +1,7 @@
 import { fetchUserData, fetchMoreRepositories } from './graphql.js';
 import { calculateLongestStreak, formatStreak } from './streak.js';
 import { determineTopLanguage } from './language.js';
+import { formatRelativeActivity, formatAccountAge } from './time.js';
 
 export async function getGitHubStats(username, token) {
   if (!username) {
@@ -74,7 +75,7 @@ export async function getGitHubStats(username, token) {
   });
 
   let lastRepo = '—';
-  let lastCommit = '—';
+  let lastActivity = 'Active —';
 
   if (sortedRepos.length > 0 && sortedRepos[0]) {
     lastRepo = sortedRepos[0].name;
@@ -82,19 +83,11 @@ export async function getGitHubStats(username, token) {
       lastRepo = lastRepo.slice(0, 97) + '...';
     }
 
-    const commitNode = sortedRepos[0].defaultBranchRef?.target?.history?.nodes?.[0];
-    if (commitNode && commitNode.message) {
-      const rawCommitMsg = commitNode.message.replace(/\n.*/s, '');
-      if (rawCommitMsg.length > 100) {
-        lastCommit = rawCommitMsg.slice(0, 97) + '...';
-      } else {
-        lastCommit = rawCommitMsg;
-      }
-    }
+    lastActivity = formatRelativeActivity(sortedRepos[0].pushedAt);
   }
 
   const topLanguage = determineTopLanguage(allRepos);
-  const joined = formatJoinedDate(user.createdAt);
+  const joined = formatAccountAge(user.createdAt);
 
   const defaultAvatarUrl = 'https://github.com/identicons/guest.png';
   const avatar = user.avatarUrl || defaultAvatarUrl;
@@ -107,7 +100,7 @@ export async function getGitHubStats(username, token) {
     followers,
     prs,
     last_repo: lastRepo,
-    last_commit: lastCommit,
+    last_commit: lastActivity,
     top_repo: topRepo,
     forks: forkedByUser,
     repos: allRepos.length,
@@ -115,25 +108,4 @@ export async function getGitHubStats(username, token) {
     contributions,
     top_language: topLanguage
   };
-}
-
-function formatJoinedDate(createdAtString) {
-  if (!createdAtString) {
-    return 'Joined —';
-  }
-  
-  try {
-    const date = new Date(createdAtString);
-    if (isNaN(date.getTime())) {
-      return 'Joined —';
-    }
-    
-    const options = { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' };
-    const formatter = new Intl.DateTimeFormat('en-US', options);
-    const formattedDate = formatter.format(date);
-    return `Joined ${formattedDate}`;
-  } catch (error) {
-    console.error('Error formatting joined date:', error);
-    return 'Joined —';
-  }
 }

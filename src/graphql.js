@@ -88,7 +88,6 @@ export async function fetchUserData(username, token) {
           nodes {
             name
             stargazerCount
-            forkCount
             isFork
             pushedAt
             primaryLanguage {
@@ -99,17 +98,6 @@ export async function fetchUserData(username, token) {
                 size
                 node {
                   name
-                }
-              }
-            }
-            defaultBranchRef {
-              target {
-                ... on Commit {
-                  history(first: 1) {
-                    nodes {
-                      message
-                    }
-                  }
                 }
               }
             }
@@ -134,7 +122,6 @@ export async function fetchMoreRepositories(username, cursor, token) {
           nodes {
             name
             stargazerCount
-            forkCount
             isFork
             pushedAt
             primaryLanguage {
@@ -145,17 +132,6 @@ export async function fetchMoreRepositories(username, cursor, token) {
                 size
                 node {
                   name
-                }
-              }
-            }
-            defaultBranchRef {
-              target {
-                ... on Commit {
-                  history(first: 1) {
-                    nodes {
-                      message
-                    }
-                  }
                 }
               }
             }

@@ -151,7 +151,7 @@
             "label": {
               "value_type": "custom_string",
               "presentation_type": "text",
-              "value": "Latest Commit"
+              "value": "Last Active"
             }
           }
         },
