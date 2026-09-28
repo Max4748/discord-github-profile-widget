@@ -41,12 +41,12 @@ After creating your Discord Profile Widget, add the following fields under **Gam
 | `avatar` | Media | GitHub profile avatar |
 | `last_repo` | String | Most recently pushed repository |
 | `last_commit` | String | Latest commit message |
-| `stars` | Number | Total stars |
+| `top_repo` | String | Most starred repository (name + star count) |
 | `forks` | Number | Repositories forked by you |
 | `repos` | Number | Total repositories |
-| `streak` | String | Current contribution streak |
+| `streak` | String | Longest contribution streak in the last 12 months |
 | `contributions` | Number | Contributions this year |
-| `top_language` | String | Most used language |
+| `top_language` | String | Top 3 most used languages (comma-separated) |
 | `followers` | Number | GitHub followers |
 | `prs` | Number | Total pull requests |
 

@@ -38,13 +38,13 @@
           "fields": {
             "value": {
               "value_type": "data",
-              "presentation_type": "number",
-              "value": "stars"
+              "presentation_type": "text",
+              "value": "top_repo"
             },
             "label": {
               "value_type": "custom_string",
               "presentation_type": "text",
-              "value": "Stars"
+              "value": "Top Repo"
             }
           }
         },
@@ -72,7 +72,7 @@
             "label": {
               "value_type": "custom_string",
               "presentation_type": "text",
-              "value": "Streak"
+              "value": "Best Streak"
             }
           }
         },
@@ -86,7 +86,7 @@
             "label": {
               "value_type": "custom_string",
               "presentation_type": "text",
-              "value": "Top Language"
+              "value": "Top Languages"
             }
           }
         }

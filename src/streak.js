@@ -1,4 +1,4 @@
-export function calculateStreak(calendar) {
+export function calculateLongestStreak(calendar) {
   if (!calendar || !calendar.weeks) {
     return 0;
   }
@@ -6,32 +6,21 @@ export function calculateStreak(calendar) {
   const days = calendar.weeks
     .flatMap(week => week.contributionDays)
     .filter(day => day && day.date)
-    .sort((a, b) => new Date(b.date) - new Date(a.date));
+    .sort((a, b) => new Date(a.date) - new Date(b.date));
 
-  if (days.length === 0) {
-    return 0;
-  }
+  let longest = 0;
+  let current = 0;
 
-  let streak = 0;
-  let startIndex = 0;
-
-  if (days[0].contributionCount === 0) {
-    if (days.length > 1 && days[1].contributionCount > 0) {
-      startIndex = 1;
+  for (const day of days) {
+    if (day.contributionCount > 0) {
+      current++;
+      longest = Math.max(longest, current);
     } else {
-      return 0;
+      current = 0;
     }
   }
 
-  for (let i = startIndex; i < days.length; i++) {
-    if (days[i].contributionCount > 0) {
-      streak++;
-    } else {
-      break;
-    }
-  }
-
-  return streak;
+  return longest;
 }
 
 export function formatStreak(streakCount) {

@@ -1,6 +1,6 @@
 import { fetchUserData, fetchMoreRepositories } from './graphql.js';
-import { calculateStreak, formatStreak } from './streak.js';
-import { determineTopLanguage } from './language.js';
+import { calculateLongestStreak, formatStreak } from './streak.js';
+import { determineTopLanguages } from './language.js';
 
 export async function getGitHubStats(username, token) {
   if (!username) {
@@ -24,8 +24,8 @@ export async function getGitHubStats(username, token) {
   const followers = user.followers?.totalCount || 0;
   const prs = user.pullRequests?.totalCount || 0;
 
-  const streakDays = calculateStreak(contributionCalendar);
-  const streak = formatStreak(streakDays);
+  const longestStreakDays = calculateLongestStreak(contributionCalendar);
+  const streak = formatStreak(longestStreakDays);
 
   const allRepos = [];
   if (user.repositories) {
@@ -45,15 +45,25 @@ export async function getGitHubStats(username, token) {
     }
   }
 
-  let totalStars = 0;
   let forkedByUser = 0;
+  let topStarredRepo = null;
 
   for (const repo of allRepos) {
     if (repo) {
-      totalStars += repo.stargazerCount || 0;
       if (repo.isFork) {
         forkedByUser++;
       }
+      if (!topStarredRepo || (repo.stargazerCount || 0) > (topStarredRepo.stargazerCount || 0)) {
+        topStarredRepo = repo;
+      }
+    }
+  }
+
+  let topRepo = '—';
+  if (topStarredRepo && topStarredRepo.stargazerCount > 0) {
+    topRepo = `${topStarredRepo.name} (${topStarredRepo.stargazerCount}★)`;
+    if (topRepo.length > 100) {
+      topRepo = topRepo.slice(0, 97) + '...';
     }
   }
 
@@ -83,7 +93,8 @@ export async function getGitHubStats(username, token) {
     }
   }
 
-  const topLanguage = determineTopLanguage(allRepos);
+  const topLanguages = determineTopLanguages(allRepos, 3);
+  const topLanguage = topLanguages.length > 0 ? topLanguages.join(', ') : 'N/A';
   const joined = formatJoinedDate(user.createdAt);
 
   const defaultAvatarUrl = 'https://github.com/identicons/guest.png';
@@ -98,7 +109,7 @@ export async function getGitHubStats(username, token) {
     prs,
     last_repo: lastRepo,
     last_commit: lastCommit,
-    stars: totalStars,
+    top_repo: topRepo,
     forks: forkedByUser,
     repos: allRepos.length,
     streak,

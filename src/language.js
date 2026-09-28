@@ -1,6 +1,6 @@
-export function determineTopLanguage(repositories) {
+export function determineTopLanguages(repositories, count = 3) {
   if (!repositories || repositories.length === 0) {
-    return 'N/A';
+    return [];
   }
 
   const languageSizes = {};
@@ -24,27 +24,16 @@ export function determineTopLanguage(repositories) {
     }
   }
 
-  let topLanguageBySize = null;
-  let maxSize = -1;
-  for (const [lang, size] of Object.entries(languageSizes)) {
-    if (size > maxSize) {
-      maxSize = size;
-      topLanguageBySize = lang;
-    }
+  const bySize = Object.entries(languageSizes)
+    .sort((a, b) => b[1] - a[1])
+    .map(([lang]) => lang);
+
+  if (bySize.length > 0) {
+    return bySize.slice(0, count);
   }
 
-  if (topLanguageBySize) {
-    return topLanguageBySize;
-  }
-
-  let topLanguageByCount = null;
-  let maxCount = -1;
-  for (const [lang, count] of Object.entries(primaryLanguageCounts)) {
-    if (count > maxCount) {
-      maxCount = count;
-      topLanguageByCount = lang;
-    }
-  }
-
-  return topLanguageByCount || 'N/A';
+  return Object.entries(primaryLanguageCounts)
+    .sort((a, b) => b[1] - a[1])
+    .map(([lang]) => lang)
+    .slice(0, count);
 }
