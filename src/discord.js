@@ -70,8 +70,8 @@ export async function updateDiscordWidget(config, stats) {
         },
         {
           type: 1, // Text
-          name: 'last_commit',
-          value: stats.last_commit
+          name: 'last_active',
+          value: stats.last_active
         },
         {
           type: 1, // Text

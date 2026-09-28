@@ -40,7 +40,7 @@ After creating your Discord Profile Widget, add the following fields under **Gam
 | `joined` | String | Account age (e.g. "3 Years on GitHub") |
 | `avatar` | Media | GitHub profile avatar |
 | `last_repo` | String | Most recently pushed repository |
-| `last_commit` | String | Relative time since the last push (e.g. "Active 2h ago") |
+| `last_active` | String | Relative time since the last push (e.g. "Active 2h ago") |
 | `top_repo` | String | Most starred repository (name + star count) |
 | `forks` | Number | Repositories forked by you |
 | `repos` | Number | Total repositories |

@@ -100,7 +100,7 @@ export async function getGitHubStats(username, token) {
     followers,
     prs,
     last_repo: lastRepo,
-    last_commit: lastActivity,
+    last_active: lastActivity,
     top_repo: topRepo,
     forks: forkedByUser,
     repos: allRepos.length,
