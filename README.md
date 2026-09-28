@@ -46,7 +46,7 @@ After creating your Discord Profile Widget, add the following fields under **Gam
 | `repos` | Number | Total repositories |
 | `streak` | String | Longest contribution streak in the last 12 months |
 | `contributions` | Number | Contributions this year |
-| `top_language` | String | Top 3 most used languages (comma-separated) |
+| `top_language` | String | Most used language |
 | `followers` | Number | GitHub followers |
 | `prs` | Number | Total pull requests |
 

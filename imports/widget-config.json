@@ -86,7 +86,7 @@
             "label": {
               "value_type": "custom_string",
               "presentation_type": "text",
-              "value": "Top Languages"
+              "value": "Top Language"
             }
           }
         }

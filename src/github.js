@@ -1,6 +1,6 @@
 import { fetchUserData, fetchMoreRepositories } from './graphql.js';
 import { calculateLongestStreak, formatStreak } from './streak.js';
-import { determineTopLanguages } from './language.js';
+import { determineTopLanguage } from './language.js';
 
 export async function getGitHubStats(username, token) {
   if (!username) {
@@ -93,8 +93,7 @@ export async function getGitHubStats(username, token) {
     }
   }
 
-  const topLanguages = determineTopLanguages(allRepos, 3);
-  const topLanguage = topLanguages.length > 0 ? topLanguages.join(', ') : 'N/A';
+  const topLanguage = determineTopLanguage(allRepos);
   const joined = formatJoinedDate(user.createdAt);
 
   const defaultAvatarUrl = 'https://github.com/identicons/guest.png';
