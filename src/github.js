@@ -46,12 +46,14 @@ export async function getGitHubStats(username, token) {
   }
 
   let totalStars = 0;
-  let totalForks = 0;
-  
+  let forkedByUser = 0;
+
   for (const repo of allRepos) {
     if (repo) {
       totalStars += repo.stargazerCount || 0;
-      totalForks += repo.forkCount || 0;
+      if (repo.isFork) {
+        forkedByUser++;
+      }
     }
   }
 
@@ -97,7 +99,7 @@ export async function getGitHubStats(username, token) {
     last_repo: lastRepo,
     last_commit: lastCommit,
     stars: totalStars,
-    forks: totalForks,
+    forks: forkedByUser,
     repos: allRepos.length,
     streak,
     contributions,

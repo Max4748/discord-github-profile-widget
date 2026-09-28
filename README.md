@@ -42,7 +42,7 @@ After creating your Discord Profile Widget, add the following fields under **Gam
 | `last_repo` | String | Most recently pushed repository |
 | `last_commit` | String | Latest commit message |
 | `stars` | Number | Total stars |
-| `forks` | Number | Total forks |
+| `forks` | Number | Repositories forked by you |
 | `repos` | Number | Total repositories |
 | `streak` | String | Current contribution streak |
 | `contributions` | Number | Contributions this year |
